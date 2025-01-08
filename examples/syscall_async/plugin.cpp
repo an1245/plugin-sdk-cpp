@@ -32,8 +32,7 @@ class my_plugin
     std::string get_description() { return "some description"; }
 
     std::string get_contact() { return "some contact"; }
-
-    bool debug = false;
+    std::string get_required_api_version() { return "3.7.0"; }
 
     // (optional)
     bool set_config(falcosecurity::set_config_input& i)
@@ -119,10 +118,8 @@ class my_plugin
 
         auto& evt = in.get_event_reader();
         auto& req = in.get_extract_request();
-        if(debug)
-        {
-            printf("Received Event Type: %d\n", evt.get_type());
-        }
+       
+        logger.log("Received Event Type: " +  evt.get_type()); 
 
         switch(evt.get_type())
         {
@@ -135,10 +132,9 @@ class my_plugin
             case 0: // myplugin.geteventname
             {
                 std::string event_name = ad.get_name();
-                if(debug)
-                {
-                    printf("Event Name: %s", event_name.c_str());
-                }
+                
+                logger.log("Event Name: " + event_name);
+                
                 req.set_value(event_name.c_str(), true);
                 return true;
             }
@@ -154,10 +150,8 @@ class my_plugin
                     event_data = std::string(json_charbuf_pointer);
                 }
 
-                if(debug)
-                {
-                    printf("Event Data : %s", event_data.c_str());
-                }
+                logger.log("Event Data : " + event_data);
+                
                 req.set_value(event_data.c_str(), true);
                 return true;
             }
